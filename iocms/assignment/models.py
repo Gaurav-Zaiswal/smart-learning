@@ -11,9 +11,9 @@ class Assignment(models.Model):
     title = models.CharField(max_length=150)
     description = models.TextField(blank=True, null=True)
     paper = models.FileField(upload_to='assignment/')
-    points = models.IntegerField()
+    # points = models.IntegerField()
     creation_date = models.DateTimeField(default=now)
-    deadline = models.DateTimeField()
+    # deadline = models.DateTimeField()
 
     def __str__(self) -> str:
         return self.title[0:20]

@@ -10,7 +10,7 @@ from classroom.views import Lookup
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('class/', include('classroom.urls')),
-    path('assignment-api/', include('assignment.urls', namespace='assignment')),
+    path('assignment/', include('assignment.urls', namespace='assignment')),
     path('feed/', include('feed.urls', namespace='feed')),
     path('users/', include('users.urls'), name="user-register"),
     path('attendance/', include('attendance.urls'), name="user-attendance"),

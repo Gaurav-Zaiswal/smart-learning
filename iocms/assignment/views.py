@@ -19,7 +19,7 @@ from .models import Assignment, AssignmentByStudent
 from .serializers import (AssignmentCreateSerializer, 
                             AssignmentListSerializer, 
                             AssignmentDetailSerializer,
-                            AssignmentSubmitSerializer)
+)
 # from .send_email import send_email
 
 # Create your views here.
@@ -46,13 +46,12 @@ class AssignmentListView(APIView):
 
 class AssignmentCreateView(APIView):
 
-    # permission_classes = [IsTeacherUser]
+    permission_classes = [IsAuthenticated, IsTeacherUser]
 
     def post(self, request, class_pk):
+        serializer = AssignmentCreateSerializer(data=request.data)
         request.data['teacher'] = request.user.id
         request.data['class_name'] = class_pk
-
-        serializer = AssignmentCreateSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()             
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -71,44 +70,47 @@ class AssignmentDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-#assignment submit by student
-class AssignmentSubmitView(APIView):
-    permission_classes = [IsAuthenticated,] 
-    # parser_classes = [MultiPartParser,FileUploadParser, ]  
+# class AssignmentSubmitView(APIView):
+#     """
+#     assignment submission view
+#     """
 
-    def get(self, requst, pk):
-        query  = get_object_or_404(Assignment,pk = pk)
-        serializer = AssignmentDetailSerializer(query)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     permission_classes = [IsAuthenticated,]  
 
-    def post(self, request,pk):
-        request.data['student'] = request.user.id 
-        # assignment_file = request.FILES['file'] 
-        print(request.data)
-        try:
-            request.data['assignment_answer'] = request.FILES['file'] 
-            serializer = AssignmentSubmitSerializer(data = request.data)
-        except: 
-            serializer = AssignmentSubmitSerializer(data = request.data)
+#     def get(self, requst, pk):
+#         query  = get_object_or_404(Assignment,pk = pk)
+#         serializer = AssignmentDetailSerializer(query)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+#     def post(self, request,pk):
+#         request.data['student'] = request.user.id 
+#         try:
+#             request.data['assignment_answer'] = request.FILES['file'] 
+#             serializer = AssignmentSubmitSerializer(data = request.data)
+#         except: 
+#             serializer = AssignmentSubmitSerializer(data = request.data)
  
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status = status.HTTP_201_CREATED)
         
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
 
-class SubbmittedAssignmentView(APIView):
-    permission_classes = [IsAuthenticated,]
+# class SubbmittedAssignmentView(APIView):
+#     """
+#     view list of submitted asignemnts
+#     """
+#     permission_classes = [IsAuthenticated,]
 
-    def get(self,request, class_pk):
-        if request.user.is_teacher:
-            # print()
-            # query = AssignmentByStudent.objects.filter(assignment_details__teacher= 1)   #original query
-            query = AssignmentByStudent.objects.filter(assignment_details__class_name__id=class_pk) # updated query
-            serializer = AssignmentSubmitSerializer(query, many = True)
+#     def get(self,request, class_pk):
+#         if request.user.is_teacher:
+#             # print()
+#             # query = AssignmentByStudent.objects.filter(assignment_details__teacher= 1)   #original query
+#             query = AssignmentByStudent.objects.filter(assignment_details__class_name__id=class_pk) # updated query
+#             serializer = AssignmentSubmitSerializer(query, many = True)
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            raise PermissionDenied('You dont have access to view this data ')
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         else:
+#             raise PermissionDenied('You dont have access to view this data ')

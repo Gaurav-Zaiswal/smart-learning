@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from classroom.serializers import  RecommendationListSerializer
-from classroom.documents import ClassroomDocument
+# from classroom.documents import ClassroomDocument
 
 from .recommed import ComputeRecommendation
 

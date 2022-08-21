@@ -1,7 +1,7 @@
 # from dataclasses import field
 # from msilib.schema import Class
 # from pyexpat import model
-from .models import Profile, User
+from .models import Images, Profile, User
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator  # makes sure email, username are unique
@@ -119,4 +119,34 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['image']
 
-        
+
+class PicturesSerializer(serializers.ModelSerializer):
+    """
+    foreign key does not require any special treatment. however its represnetation does.
+    for example, if to_representation is not used,
+    response will be:
+    {
+    "id": 10,
+    "image": "https://aithonimages.blob.core.windows.net/media/author_pictures/7c3c.jpg",
+    "user": 1
+    }
+
+    but if you want to include all the details of user as will, then use to_representation as well.
+    {
+        "id": 10,
+        "image": "https://aithonimages.blob.core.windows.net/media/author_pictures/7c3c.jpg",
+        "user": {
+            "first name":
+            ...
+        }
+    }
+
+    here, we are fetching `user` details from `images`, but if you want to fetch `images' from 'user'
+    then `RelatedField` is used.
+
+    learn about `depth` artibute inside `Meta`
+    """
+    class Meta:
+        model = Images
+        fields = '__all__'
+        # depth = 1 

@@ -4,7 +4,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 #
 # User = get_user_model()
 
@@ -17,15 +17,15 @@ def covert_to_grayscale(file):
 
 def profile_pic_path(instance, filename):
     # checks jpg exttension
-
     extension = filename.split('.')[1]
     if len(filename.split('.')) != 2:
         raise ValidationError("image seems currupted...")
     if extension not in ['jpg', 'jpeg']:
         raise ValidationError("we currently accept jpg/jpeg formats only.")
-    unique_name = uuid.uuid4().hex
-    # print('author_pictures/' + unique_name + '.' + extension)
-    return 'author_pictures/' + unique_name + '.' + extension
+    unique_name = uuid.uuid4().hex[:4]
+    username = str(instance).split("-")[0].strip()
+    # return 'author_pictures/' + unique_name + '.' + extension
+    return 'user_pictures/' + username +"_" + unique_name + '.' + extension
 
 
 
@@ -60,3 +60,11 @@ class Teacher(models.Model):
 
 class Profile(models.Model):
     image = models.ImageField(upload_to=profile_pic_path)
+
+
+class Images(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to=profile_pic_path)
+
+    def __str__(self) -> str:
+        return f"{self.user.username} - {self.image}"

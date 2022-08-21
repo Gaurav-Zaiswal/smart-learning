@@ -7,8 +7,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
+from .permissions import IsStudentUser
+
 from .models import Student, Teacher, User
-from .serializers import ProfileSerializer, StudentRegistrationSerializer, TeacherRegistrationSerializer, UserSerializer
+from .serializers import PicturesSerializer, ProfileSerializer, StudentRegistrationSerializer, TeacherRegistrationSerializer, UserSerializer
 
 
 
@@ -73,3 +75,18 @@ class UploadImage(APIView):
         
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
+
+
+class UploadImages(APIView):
+    permission_classes = [IsStudentUser]
+
+    def post(self, request):
+        request.data['image'] = request.FILES['image']
+        # request.data['user'] = User.objects.get(pk=request.user.id)
+        serializer = PicturesSerializer(data = request.data)
+        request.data['user'] = request.user.id       
+        # import pdb; pdb.set_trace()
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

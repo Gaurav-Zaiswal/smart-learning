@@ -93,25 +93,35 @@ class ClassroomAddView(APIView):
 
 
     def post(self, request):
+        request.data._mutable = True
         query = request.data["class_code"]
         serializer = ClassroomAddSerializer(data=request.data)
         classroom = Classroom.objects.get(class_code=query)  # Getting information of the class
+        # import pdb; pdb.set_trace()
+        # print(classroom.id)
         current_user_id = request.user.id
-        if classroom.is_class_code_enabled:
+        if classroom.is_class_code_enabled:  
+            # import pdb
+            # pdb.set_trace()        
             request.data['classroom_id'] = classroom.id
             try:
+                # import pdb
+                # pdb.set_trace()
                 classroomStudent = ClassroomStudents.objects.get(classroom_id=classroom.id)
             except ClassroomStudents.DoesNotExist:
                 classroomStudent = None
 
             if classroomStudent is None:
-                request.data['enrolled_student_id'] = [current_user_id, ]
+                # import pdb
+                # pdb.set_trace()
+                # request.data['enrolled_student_id'] = [current_user_id, ]
+                request.data['enrolled_student_id'] = current_user_id
                 if serializer.is_valid():
+                    # print(serializer.data)
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             else:
-
                 list_of_enrolled_student = classroomStudent.enrolled_student_id.all()  # Find enrolled students
                 list_of_enrolled_student_id = [student.user.id for student in
                                                list_of_enrolled_student]  # Collect students' id

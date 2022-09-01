@@ -43,7 +43,7 @@ class ClassroomCreateView(APIView):
         else:
             raise PermissionDenied('Only teacher can create class')
 
-# Classroom detail
+# Classroom detail 
 class ClassroomDetailView(RetrieveAPIView):
     # used generic API so that I could utilize get_serializer_context() method
     # to add additional data in context
@@ -88,6 +88,7 @@ class ClassroomListView(APIView, PaginationMixing):
             serializer = ClassroomListSerializer(student_enrolled_class_list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class ClassroomAddView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -108,18 +109,21 @@ class ClassroomAddView(APIView):
                 # import pdb
                 # pdb.set_trace()
                 classroomStudent = ClassroomStudents.objects.get(classroom_id=classroom.id)
+                # classroomStudent = ClassroomStudents.objects.get_or_create(classroom_id=classroom.id)
             except ClassroomStudents.DoesNotExist:
                 classroomStudent = None
 
             if classroomStudent is None:
-                # import pdb
-                # pdb.set_trace()
+                CSInstance = ClassroomStudents.objects.create(classroom_id=classroom) # create new instance
+                CSInstance.enrolled_student_id.add(current_user_id) # add enrolled student
                 # request.data['enrolled_student_id'] = [current_user_id, ]
                 request.data['enrolled_student_id'] = current_user_id
-                if serializer.is_valid():
-                    # print(serializer.data)
+                # import pdb; pdb.set_trace() 
+                if serializer.is_valid(raise_exception=True):
+                    print(serializer.data)
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
+                print(serializer.data)
 
             else:
                 list_of_enrolled_student = classroomStudent.enrolled_student_id.all()  # Find enrolled students
@@ -137,6 +141,54 @@ class ClassroomAddView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             raise PermissionDenied("You do not have permission to view classes of other users.")
+
+# class ClassroomAddView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+
+#     def post(self, request):
+#         request.data._mutable = True
+#         query = request.data["class_code"]
+#         serializer = ClassroomAddSerializer(data=request.data)
+#         classroom = Classroom.objects.get(class_code=query)  # Getting information of the class
+#         # import pdb; pdb.set_trace()
+#         # print(classroom.id)
+#         current_user_id = request.user.id
+#         if classroom.is_class_code_enabled:  
+#             # import pdb
+#             # pdb.set_trace()        
+#             request.data['classroom_id'] = classroom.id
+#             try:
+#                 # import pdb
+#                 # pdb.set_trace()
+#                 classroomStudent = ClassroomStudents.objects.get(classroom_id=classroom.id)
+#             except ClassroomStudents.DoesNotExist:
+#                 classroomStudent = None
+
+#             if classroomStudent is None:
+#                 request.data['enrolled_student_id'] = current_user_id
+#                 if serializer.is_valid():
+#                     # print(serializer.data)
+#                     serializer.save()
+#                     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+#             else:
+#                 list_of_enrolled_student = classroomStudent.enrolled_student_id.all()  # Find enrolled students
+#                 list_of_enrolled_student_id = [student.user.id for student in
+#                                                list_of_enrolled_student]  # Collect students' id
+
+#                 if current_user_id in list_of_enrolled_student_id:
+#                     return Response({"message": "student already joined", "email": request.user.email},
+#                                     status=status.HTTP_201_CREATED)
+#                 else:
+#                     classroomStudent.enrolled_student_id.add(current_user_id)
+#                     return Response({"message": "Student joined to class successfully", "email": request.user.email},
+#                                     status=status.HTTP_201_CREATED)
+#                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             raise PermissionDenied("You do not have permission to view classes of other users.")
+
 
 class TopRatedClassrooms(APIView, PaginationMixing):
     """

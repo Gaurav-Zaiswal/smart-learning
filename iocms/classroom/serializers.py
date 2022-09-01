@@ -55,9 +55,12 @@ class ClassroomAddSerializer(serializers.ModelSerializer):
         fields = "__all__"
     
     def to_representation(self, instance):
+        import pdb
+        pdb.set_trace()
         response = super().to_representation(instance)
         response['enrolled_student_id'] = StudentSerializer(instance.enrolled_student_id).data # add foreign key
         return response 
+
 
 class RatingSerializer(serializers.ModelSerializer):
     """

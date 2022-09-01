@@ -1,6 +1,13 @@
 
 from django.contrib import admin
-from .models import Images, User, Teacher, Student
+from .models import (
+    AttendenceImage, 
+    Images, 
+    User, 
+    Teacher, 
+    Student,
+    RegisterVideo
+)
 # Register your models here.
 
 
@@ -15,6 +22,6 @@ class UserAdmin(admin.ModelAdmin):
         
 
 
-admin.site.register([Teacher, Student, Images])
+admin.site.register([Teacher, Student, Images, AttendenceImage, RegisterVideo])
 
  

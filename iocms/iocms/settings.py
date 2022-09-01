@@ -117,15 +117,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-# STATIC_URL = '/static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static')
 
 # STATICFILES_DIRS = [
 #     BASE_DIR / "static",
-#     # '/var/www/static/',
 # ]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 
 
 ######################################
@@ -144,13 +145,13 @@ REST_FRAMEWORK = {
 # DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 # STATICFILES_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 
-DEFAULT_FILE_STORAGE = 'iocms.custom_azure.AzureMediaStorage'
-STATICFILES_STORAGE = 'iocms.custom_azure.AzureStaticStorage'
+# DEFAULT_FILE_STORAGE = 'iocms.custom_azure.AzureMediaStorage'
+# STATICFILES_STORAGE = 'iocms.custom_azure.AzureStaticStorage'
 
 # AZURE_ACCOUNT_NAME = ''
 # AZURE_ACCOUNT_KEY = ''
-AZURE_CUSTOM_DOMAIN = '' 
+# AZURE_CUSTOM_DOMAIN = ''
 
-STATIC_LOCATION = 'static'
-STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+# STATIC_LOCATION = 'static'
+# STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
 

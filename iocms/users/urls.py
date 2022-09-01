@@ -4,7 +4,8 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views as auth_views
 
 from .views import (
-    CreateStudentView, CreateTeacherView, UploadImages, UserLogoutView, UserView, UploadImage
+    CreateStudentView, CreateTeacherView, UploadAttendanceImageViewset, 
+    UploadImages, UserLogoutView, UserView, UploadImage, RegisterVideoView
 )
 
 
@@ -13,15 +14,17 @@ app_name = "users"
 router = DefaultRouter()
 router.register('api/student-register', CreateStudentView, basename='StudentModel')
 router.register('api/teacher-register', CreateTeacherView, basename='TeacherModel')
+# router.register('api/attendence/image', UploadAttendanceImageViewset, basename='UploadImageForAttendence')
 # router.register('api/user-info', UserView, basename = 'UserModel')
 
-
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include(router.urls)), # added routers
     path('api/profile/upload-image/', UploadImage.as_view(), name='upload-imgage'),
-    path('api/upload/', UploadImages.as_view(), name='upload-images') ,
+    path('api/attendence/image/', UploadAttendanceImageViewset.as_view(), name='UploadImageForAttendence'),
+    path('api/upload/', UploadImages.as_view(), name='upload-images'),
+    path('api/register/video/', RegisterVideoView.as_view(), name='register-video'),
     path('api/login/', auth_views.obtain_auth_token, name='login'),
     path('api/user-info/', UserView.as_view(), name = 'user-info'),
     path('api/logout/', UserLogoutView.as_view(), name = "user-logout"),
 ]
- 
+

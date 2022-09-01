@@ -1,7 +1,7 @@
 # from dataclasses import field
 # from msilib.schema import Class
 # from pyexpat import model
-from .models import Images, Profile, User
+from .models import AttendenceImage, Images, Profile, User, RegisterVideo
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator  # makes sure email, username are unique
@@ -150,3 +150,24 @@ class PicturesSerializer(serializers.ModelSerializer):
         model = Images
         fields = '__all__'
         # depth = 1 
+
+
+class AttendencePicturesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AttendenceImage
+        fields = '__all__'
+        # depth = 1 
+    
+    def create(self, validated_data):
+        image, created = AttendenceImage.objects.update_or_create(
+            user=validated_data.get('user', None),
+            defaults={'image': validated_data.get('image', None)})
+        return image
+
+
+class VideoSerializer(serializers.ModelSerializer):
+    # user = UserSerializer()
+
+    class Meta:
+        model = RegisterVideo
+        fields = ['user', 'video']

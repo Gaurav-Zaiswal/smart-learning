@@ -1,4 +1,4 @@
-from django.db.models import Avg 
+from django.db.models import Avg, Q 
 from django.http import Http404, JsonResponse
 from django.core.exceptions import PermissionDenied
 
@@ -67,22 +67,22 @@ class ClassroomDetailView(RetrieveAPIView):
 # Classroom List
 class ClassroomListView(APIView, PaginationMixing):
     permission_classes = [IsAuthenticated]
-    pagination_class = CustomPageNumberPagination
+    # pagination_class = CustomPageNumberPagination
 
     def get(self, request):
         user_id = request.user.id
         user = User.objects.get(id=user_id)
         if user.is_teacher:
             query = Classroom.objects.filter(created_by_id=user_id)
-            page = self.paginate_queryset(query)
+            # page = self.paginate_queryset(query)
             # print(page)
-            serializer = ClassroomListSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)  # from PaginationMixing
-            # return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer = ClassroomListSerializer(query, many=True)
+            # return self.get_paginated_response(serializer.data)  # from PaginationMixing
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             # query for list of class where student is enrolled
             enrolled_student = ClassroomStudents.objects.filter(enrolled_student_id__in=[user.id])
-            print(enrolled_student)
+            # print(enrolled_student)
             # query to extract Classroom model fields by passing classroom_id
             student_enrolled_class_list = [classroom.classroom_id for classroom in enrolled_student]
             serializer = ClassroomListSerializer(student_enrolled_class_list, many=True)
@@ -212,13 +212,27 @@ class RateClassroom(APIView):
     permission_classes = [IsAuthenticated, IsStudentUser]   
     
     def post(self, request, pk):
+        """
+        if rating by `request.user` already exists for `classroom` then update existing rating, 
+        otherwise create new rating
+        """
         if request.user.is_student:
-            serializer = RatingSerializer(data=request.data)
+            rating_count = Rating.objects.filter(Q(classroom=2),Q(rated_by=1)).count()
+            if rating_count > 0:
+                # update exiting instance
+                serializer = RatingSerializer(
+                    instance=Rating.objects.filter(Q(classroom=2),Q(rated_by=1)).first(),
+                    data=request.data
+                )
+            else:
+                # create new instance
+                serializer = RatingSerializer(data=request.data)
+            # serializer = RatingSerializer(data=request.data)
             request.data['rated_by'] = request.user.id # hopefully its student's id
             request.data['classroom'] = pk
-            print(request.data)
-            if serializer.is_valid():
-                serializer.save()        
+            # print(request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(instance=Rating.objects.filter(Q(classroom=2),Q(rated_by=1)).first())        
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:

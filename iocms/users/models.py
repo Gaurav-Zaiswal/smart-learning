@@ -6,8 +6,12 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.core.validators import FileExtensionValidator
+from django.db.models.signals import post_save
 
-from helper.extract_frames import frame_extractor
+# from helper.extract_frames import frame_extractor
+from helper.extract_frames import frame_extractor_registration
+from utils.signals import train_attendance_faces, train_registration_faces
+# from utils.signals import train_faces
 
 #
 # User = get_user_model()
@@ -50,7 +54,7 @@ def register_video_path(instance, filename):
     if extension not in ['mp4', 'mkv', 'webm', 'MP4', 'MKV', 'WEBM']:
         raise ValidationError("video format cannot be accepted!")
     unique_name = uuid.uuid4().hex[:6]
-    frame_extractor(instance=instance, dir_name=username)
+    frame_extractor_registration(instance=instance, dir_name=username)
     return 'register_video' + unique_name + '.' + extension
 
 
@@ -122,5 +126,4 @@ class RegisterVideo(models.Model):
     def __str__(self) -> str:
         return f"{self.user.username} - {self.video}"
 
-
-
+post_save.connect(train_registration_faces, sender=RegisterVideo)

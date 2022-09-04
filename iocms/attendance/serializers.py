@@ -1,3 +1,4 @@
+from turtle import title
 from rest_framework import serializers
 from users.serializers import StudentSerializer
 
@@ -13,3 +14,12 @@ class AttendanceVideoSerializer(serializers.ModelSerializer):
         # response = super().to_representation(instance)
         # response['user'] = StudentSerializer(instance.user).data
         # return response 
+
+
+class DummySerializer(serializers.Serializer):
+    title = serializers.CharField()
+    description = serializers.CharField()
+    author = serializers.CharField()
+    document = serializers.FileField()
+
+    

@@ -64,7 +64,7 @@ class ComputeRecommendation:
 
                 #Filtering out users that have watched movies that the input has watched and storing it
                 user_subset = rating_df[rating_df['classroom_id'].isin(input_classes['classroom_id'].tolist())]
-                print(user_subset.head())
+                # print(user_subset.head())
 
                 #Groupby creates several sub dataframes where they all have the same value in the column specified as the parameter
                 userSubsetGroup = user_subset.groupby(['rated_by'])

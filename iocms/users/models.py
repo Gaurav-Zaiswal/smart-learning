@@ -45,6 +45,9 @@ def attendence_pic_path(instance, filename):
 
 
 def register_video_path(instance, filename):
+    """
+    get video and save frames in jpg format, also save the video
+    """
     username = str(instance).split("-")[0].strip()
     # import pdb; pdb.set_trace()
     # checks jpg exttension
@@ -126,4 +129,6 @@ class RegisterVideo(models.Model):
     def __str__(self) -> str:
         return f"{self.user.username} - {self.video}"
 
+
+# call signal to train the image into PGM format
 post_save.connect(train_registration_faces, sender=RegisterVideo)

@@ -7,6 +7,7 @@ import os
 
 def detect_save(sourcePath, destinationPath):
     # cascPath = "C:\\Users\gaurav\\OneDrive - Nepal College of Information Technology\aithon-be-BACKUP\\Aithon be\\iw-acad-iocms-be\\iocms\\helper\\front.xml"
+    # print("within detect_save function")
     cascPath = "F:\\front.xml"
     # os.chmod(cascPath, 0o444)
     faceCascade = cv2.CascadeClassifier(cascPath)
@@ -28,10 +29,10 @@ def detect_save(sourcePath, destinationPath):
         minSize=(30, 30)
     )
 
-    if(len(faces) != 1):
-        print("fail")
-        return -1
-    
+    # if(len(faces) != 1):
+    #     print("fail")
+    #     return -1
+    print(faces)
     for (x, y, w, h) in faces:
         x1 = int(x-h/1.5)
         y1 = int(y)
@@ -42,6 +43,7 @@ def detect_save(sourcePath, destinationPath):
         bw = cv2.cvtColor(detected, cv2.COLOR_BGR2GRAY)
         print(destinationPath)
         cv2.imwrite(destinationPath, bw)
+        print("within detect save")
         return 1
 
 def process(sourceDirectory, destinationDirectory):
@@ -49,45 +51,49 @@ def process(sourceDirectory, destinationDirectory):
     root = "F:\\NCIT_P3\\aithon-be-BACKUP\\Aithon_be\\iw-acad-iocms-be\\media\\"
     source = root + "jpg_registration\\"
     destination = root + "pgm_processed\\"
-
+    print("within process function")
     for filename in os.listdir(sourceDirectory):
         f = os.path.join(sourceDirectory, filename)
         # import pdb; pdb.set_trace()
-        # print(f)
         if os.path.isfile(f):
-
+            print("is a file")
             if (detect_save(f, destinationDirectory + "\\" + str(properCount) + ".pgm") == 1):
                 properCount = properCount + 1
-            if (properCount == 21):
-                return 1
-    if properCount == 1: 
-        return 0
-    return -1
+            # if (properCount == 21):
+            #     return 1
+    # if properCount == 1: 
+    #     return 0
+    # return -1
 
 def convert_registration_faces(username):
     root = "F:\\NCIT_P3\\aithon-be-BACKUP\\Aithon_be\\iw-acad-iocms-be\\media\\"
     source = root + "jpg_registration\\" + username
     destination = root + "pgm_processed_registration\\" + username
-    if  os.path.exists(destination):
-        return None
-    os.mkdir(destination)
-    i= process(source, destination)
-    if i != 1:
-        shutil.rmtree(destination)
+    if not os.path.exists(destination):
+        os.mkdir(destination)
+    # i= process(source, destination)
+    # if i != 1:
+    #     shutil.rmtree(destination)
+    print("within convert_regitration_face")
+    process(source, destination)
+    
+        
 
 
 def convert_attendance_faces(username):
     root = "F:\\NCIT_P3\\aithon-be-BACKUP\\Aithon_be\\iw-acad-iocms-be\\media\\"
     source = root + "jpg_attendance\\" + username
-    destination = root + "pgm_processed_registration\\" + username
-    if  os.path.exists(destination):
-        return None
-    os.mkdir(destination)
-    i= process(source, destination)
-    if i != 1:
-        shutil.rmtree(destination)
-        return False 
-    return True
+    destination = root + "pgm_processed_attendance\\" + username
+    if not os.path.exists(destination):
+        # return None
+        os.mkdir(destination)
+    # i= process(source, destination)
+    # if i != 1:
+    #     shutil.rmtree(destination)
+    #     return False 
+    # return True
+    print("within convert_attendence_face")
+    process(source, destination)
 
 
 if __name__ == "__main__":

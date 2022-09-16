@@ -10,7 +10,7 @@ class Assignment(models.Model):
     class_name = models.ForeignKey(Classroom, on_delete=models.CASCADE)
     title = models.CharField(max_length=150)
     description = models.TextField(blank=True, null=True)
-    paper = models.FileField(upload_to='assignment/')
+    # paper = models.FileField(upload_to='assignment/')
     # points = models.IntegerField()
     creation_date = models.DateTimeField(default=now)
     # deadline = models.DateTimeField()

@@ -37,7 +37,7 @@ def frame_extractor_registration(instance, dir_name) -> bool:
     # if not os.path.exists('data'):
     #     os.makedirs('data')
     # success =True
-    while current_frame<200:
+    while current_frame<100:
         success, frame = video.read()
 
         # cv2.imshow("output video", frame)

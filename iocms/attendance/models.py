@@ -22,6 +22,10 @@ def video_renaming(instance, filename):
 
 
 def attendance_video_path(instance, filename):
+    """
+    convert uploaded video to jpg frames and sae both
+    """
+    print("within attendance video path")
     username = str(instance).split("-")[0].strip()
     # import pdb; pdb.set_trace()
     # checks jpg exttension
@@ -32,16 +36,23 @@ def attendance_video_path(instance, filename):
         raise ValidationError("video format cannot be accepted!")
     unique_name = uuid.uuid4().hex[:6]
     frame_extractor_attendence(instance=instance, dir_name=username)
-    return 'register_video' + unique_name + '.' + extension
+    return 'verify_video' + unique_name + '.' + extension
 
 
 # Create your models here.
 class AttendanceVideoModel(models.Model):
-    user = models.ForeignKey(User, related_name="user_id", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="attendance_video_model", on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     video = models.FileField(upload_to=attendance_video_path)
-
-    def __str__(self) -> str:
+    def __str__(self):
         return f"{self.user.username} - {self.video}"
+        # username = uuid.uuid4().hex[:4]
+        # return f"{username} - {self.video}"
 
 
+# signal to train the JPG images to PGM
 post_save.connect(train_attendance_faces, sender=AttendanceVideoModel)
+
+# print("_______________within attendance model")
+# print(a)
+# print("____________________________________")

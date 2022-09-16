@@ -94,7 +94,7 @@ class ClassroomAddView(APIView):
 
 
     def post(self, request):
-        request.data._mutable = True
+        # request.data._mutable = True
         query = request.data["class_code"]
         serializer = ClassroomAddSerializer(data=request.data)
         classroom = Classroom.objects.get(class_code=query)  # Getting information of the class

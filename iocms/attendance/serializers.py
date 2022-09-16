@@ -8,7 +8,7 @@ from .models import AttendanceVideoModel
 class AttendanceVideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttendanceVideoModel
-        fields = ['video']
+        fields = ['user', 'video']
     
     # def to_representation(self, instance):
         # response = super().to_representation(instance)

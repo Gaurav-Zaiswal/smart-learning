@@ -14,7 +14,7 @@ class AssignmentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
         # fields = ['id', "title", "description","class_name", "points", "deadline","teacher", "paper"]
-        fields = ['id', "title", "description","class_name", "teacher", "paper"]
+        fields = ['id', "title", "description","class_name", "teacher"]
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
@@ -28,7 +28,7 @@ class AssignmentListSerializer(serializers.ModelSerializer):
     # details = HyperlinkedIdentityField(lookup_field =  'pk', view_name='assignment:details')
     class Meta:
         model = Assignment
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'description', 'creation_date']
 
 
 class AssignmentDetailSerializer(serializers.ModelSerializer):

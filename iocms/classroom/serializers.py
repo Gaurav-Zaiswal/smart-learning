@@ -39,9 +39,12 @@ class ClassroomDetailSerializer(serializers.ModelSerializer):
 
 
 class ClassroomListSerializer(serializers.ModelSerializer):
+    avg_rating = serializers.ReadOnlyField()
+    total_review = serializers.ReadOnlyField()
     class Meta:
         model = Classroom
-        fields = ['id', 'class_name', 'class_description','class_code', 'created_by', ] 
+        # fields = ['id', 'class_name', 'class_description','class_code', 'created_by', ] 
+        fields = ['id', 'class_name', 'class_description','class_code', 'created_by', 'avg_rating', 'total_review' ] 
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
@@ -55,8 +58,8 @@ class ClassroomAddSerializer(serializers.ModelSerializer):
         fields = "__all__"
     
     def to_representation(self, instance):
-        import pdb
-        pdb.set_trace()
+        # import pdb
+        # pdb.set_trace()
         response = super().to_representation(instance)
         response['enrolled_student_id'] = StudentSerializer(instance.enrolled_student_id).data # add foreign key
         return response 

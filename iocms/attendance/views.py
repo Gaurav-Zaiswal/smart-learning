@@ -17,7 +17,7 @@ class UploadAttendanceVideo(APIView):
         # print(request.FILES['video'])
         request.data['video'] = request.FILES['video'] 
         serializer = AttendanceVideoSerializer(data = request.data)
-        # request.data['user'] = request.user.pk   
+        request.data['user'] = request.user.pk   
         # except: 
         #     serializer = AttendanceVideoSerializer(data = request.data)
         if serializer.is_valid():

@@ -1,6 +1,8 @@
 import random, string
 
 from django.db import models
+from django.db.models import Avg, Q, Count
+from django.db.models.functions import Coalesce
 from django.utils.timezone import now
 
 from users.models import Teacher, Student
@@ -25,14 +27,23 @@ class Classroom(models.Model):
     def save(self, *args, **kwargs):
         self.class_code = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
         super(Classroom, self).save(*args, **kwargs)
+    
+    @property
+    def avg_rating(self):
+        # return self.classroom.values('rating').aggregate(avg_rating=Avg('rating'))
+        return self.classroom.values('rating').aggregate(avg_rating=Coalesce(Avg('rating'), 0))
+    
+    @property
+    def total_review(self):
+        return self.classroom.count()
 
 
 class ClassroomStudents(models.Model):
-    classroom_id = models.OneToOneField(Classroom, on_delete=models.CASCADE)
-    enrolled_student_id = models.ManyToManyField(Student, blank=True)
+    classroom_id = models.OneToOneField(Classroom, on_delete=models.CASCADE, related_name="classoom_relation")
+    enrolled_student_id = models.ManyToManyField(Student, blank=True, related_name='classroom_students')
 
     def __str__(self):
-        return self.classroom_id.class_name[0:10]
+        return f"{self.classroom_id.class_name[0:25]} - {[self.enrolled_student_id]}"
 
     class Meta:
         verbose_name_plural = 'classroom_students'

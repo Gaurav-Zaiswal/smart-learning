@@ -34,17 +34,20 @@ def detect_save(sourcePath, destinationPath):
     #     return -1
     print(faces)
     for (x, y, w, h) in faces:
-        x1 = int(x-h/1.5)
-        y1 = int(y)
-        x2 = int(x+h)
-        y2 = int(y+w)
-        img = image[y1:y2, x1:x2]
-        detected = cv2.resize(img, (92, 112), interpolation = cv2.INTER_AREA)
-        bw = cv2.cvtColor(detected, cv2.COLOR_BGR2GRAY)
-        print(destinationPath)
-        cv2.imwrite(destinationPath, bw)
-        print("within detect save")
-        return 1
+        try:
+            x1 = int(x-h/1.5)
+            y1 = int(y)
+            x2 = int(x+h)
+            y2 = int(y+w)
+            img = image[y1:y2, x1:x2]
+            detected = cv2.resize(img, (92, 112), interpolation = cv2.INTER_AREA)
+            bw = cv2.cvtColor(detected, cv2.COLOR_BGR2GRAY)
+            print(destinationPath)
+            cv2.imwrite(destinationPath, bw)
+            print("within detect save")
+            return 1
+        except:
+            pass
 
 def process(sourceDirectory, destinationDirectory):
     properCount = 1

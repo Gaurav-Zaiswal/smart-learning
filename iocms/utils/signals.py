@@ -18,31 +18,37 @@ def callJavaAPIForTraining(username):
 
     file_root = "F:\\NCIT_P3\\aithon-be-BACKUP\\Aithon_be\\iw-acad-iocms-be\\media\\pgm_processed_registration\\"+username
     for i in range(1, 16):
-        file = f"{file_root}\\{i}.pgm"
-        data = {'dir':'/uploads/', 'submit':'Submit'}
-        files = {'file':(file, open(file, 'rb'))}
-        # files = {'file':('1.jpg', open('1.jpg', 'rb'))}
-        r = requests.post(url, data=data, files=files)
-        # print(type(r))
-        print(r._content)
-        print(url)
-        # r_json = r.decode('utf-8')
-        # print(json.dumps(r))
+        try:
+            file = f"{file_root}\\{i}.pgm"
+            data = {'dir':'/uploads/', 'submit':'Submit'}
+            files = {'file':(file, open(file, 'rb'))}
+            # files = {'file':('1.jpg', open('1.jpg', 'rb'))}
+            r = requests.post(url, data=data, files=files)
+            # print(type(r))
+            print(r._content)
+            print(url)
+            # r_json = r.decode('utf-8')
+            # print(json.dumps(r))
+        except:
+            pass
 
 
-def callJavaAPIForVerification(username):
+def callJavaAPIForVerification(username, email):
     """
     
     """
     url = f"{DOMAIN}/up/verify"
     file_root = "F:\\NCIT_P3\\aithon-be-BACKUP\\Aithon_be\\iw-acad-iocms-be\\media\\pgm_processed_attendance\\"+username
     for i in range(1, 14):
-        file = f"{file_root}\\{i}.pgm"
-        data = {'dir':'/uploads/', 'submit':'Submit'}
-        files = {'file':(file, open(file, 'rb'))}
-        # files = {'file':('1.jpg', open('1.jpg', 'rb'))}
-        r = requests.post(url, data=data, files=files)
-        print(r._content)
+        try:
+            file = f"{file_root}\\{i}.pgm"
+            data = {'dir':'/uploads/', 'submit':'Submit', 'email':email, 'userID':username}
+            files = {'file':(file, open(file, 'rb'))}
+            # files = {'file':('1.jpg', open('1.jpg', 'rb'))}
+            r = requests.post(url, data=data, files=files)
+            print(r._content)
+        except:
+            pass
 
 def train_registration_faces(sender, instance, created, **kwargs):
     """
@@ -70,7 +76,7 @@ def train_attendance_faces(sender, instance, created, **kwargs):
     #     raise ObjectDoesNotExist("The processed images of this user was not found!")
     # else:
         # call JAVA API
-    callJavaAPIForVerification(instance.user.username)
+    callJavaAPIForVerification(instance.user.username, instance.user.email)
     print("called java api for verification")
 
 

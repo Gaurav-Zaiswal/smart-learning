@@ -123,7 +123,7 @@ class RegisterVideo(models.Model):
     """
     upload video 
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='register_registration')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='register_registration')
     video = models.FileField(upload_to=register_video_path)
 
     def __str__(self) -> str:
